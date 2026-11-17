@@ -1,3 +1,5 @@
+[![Built with askThili](https://msrit.ask.thili.ai/api/v1/public/projects/f7mj2mtrx2/badge.svg)](https://msrit.ask.thili.ai/b/f7mj2mtrx2)
+
 # Educational Content Expander
 
 [![Built with askThili](https://ask.thili.ai/api/v1/public/projects/f7mj2mtrx2/badge.svg)](https://ask.thili.ai/b/f7mj2mtrx2)

@@ -233,3 +233,124 @@ def milestone_4(argv: list[str] | None = None) -> None:
     from app.cli import main
 
     main(argv)
+
+
+class UnigramLM:
+    """A simple unigram language model (zero-context baseline).
+
+    Predicts next words purely based on independent token frequencies with add-k smoothing,
+    serving as a baseline to demonstrate the performance gain of contextual n-gram models.
+    """
+
+    def __init__(self, k: float = 0.5):
+        if k <= 0:
+            raise ValueError("k must be positive")
+        self.k = k
+        self.counts: Counter[str] = Counter()
+        self.total_tokens: int = 0
+        self.V: set[str] = {"</s>"}
+
+    def fit(self, text: str) -> UnigramLM:
+        self.counts = Counter()
+        sents = to_sentences(text)
+        for s in sents:
+            toks = to_tokens(s) + ["</s>"]
+            self.counts.update(toks)
+        self.total_tokens = sum(self.counts.values())
+        self.V = set(self.counts.keys())
+        return self
+
+    def prob(self, word: str) -> float:
+        w = word.lower()
+        return (self.counts[w] + self.k) / (self.total_tokens + self.k * len(self.V))
+
+    def expand(self, prefix: str, seed: int = 0, min_len: int = 3, max_len: int = 20) -> str:
+        rng = random.Random(seed)
+        generated = list(to_tokens(prefix))
+        words, weights = zip(*self.counts.items())
+        added = 0
+        for _ in range(max_len):
+            nxt = rng.choices(words, weights=weights)[0]
+            if nxt == "</s>":
+                if added >= min_len:
+                    break
+                continue
+            generated.append(nxt)
+            added += 1
+        sent = " ".join(generated).strip()
+        if not sent:
+            return ""
+        sent = sent[0].upper() + sent[1:]
+        if not sent.endswith((".", "!", "?")):
+            sent += "."
+        return sent
+
+    def perplexity(self, text: str) -> float:
+        log_sum = 0.0
+        total_steps = 0
+        for s in to_sentences(text):
+            toks = to_tokens(s) + ["</s>"]
+            for w in toks:
+                log_sum += math.log(self.prob(w))
+                total_steps += 1
+        if total_steps == 0:
+            raise ValueError("Cannot compute perplexity on empty text.")
+        return math.exp(-log_sum / total_steps)
+
+
+def compare_models(
+    corpus_path: str | Path | None = None,
+    test_ratio: float = 0.2,
+    seed: int = 0,
+    sample_phrase: str = "photosynthesis is",
+) -> dict:
+    """Compare the smoothed N-gram model against the simple Unigram baseline."""
+    raw = load_corpus(corpus_path)
+    sents = to_sentences(raw)
+    rng = random.Random(seed)
+    shuffled = list(sents)
+    rng.shuffle(shuffled)
+    cut = max(1, int((1.0 - test_ratio) * len(shuffled)))
+    train_text = ". ".join(shuffled[:cut]) + "."
+    test_text = ". ".join(shuffled[cut:]) + "."
+
+    # 1. Simple Baseline: Unigram (zero-context)
+    unigram = UnigramLM(k=0.5).fit(train_text)
+
+    # 2. Bigram Model (n=2, k=0.5)
+    bigram = NgramLM(n=2, k=0.5).fit(train_text)
+
+    # 3. Trigram Model (n=3, k=0.5)
+    trigram = NgramLM(n=3, k=0.5).fit(train_text)
+
+    return {
+        "dataset": {
+            "total_sentences": len(sents),
+            "train_sentences": cut,
+            "test_sentences": len(shuffled) - cut,
+            "vocabulary_size": len(set(t for s in sents for t in to_tokens(s))),
+        },
+        "models": {
+            "unigram_baseline": {
+                "name": "Unigram (Zero-Context Baseline)",
+                "n": 1,
+                "train_ppl": round(unigram.perplexity(train_text), 2),
+                "test_ppl": round(unigram.perplexity(test_text), 2),
+                "sample_expansion": unigram.expand(sample_phrase, seed=seed, min_len=4, max_len=12),
+            },
+            "bigram": {
+                "name": "Bigram Model (n=2, add-0.5)",
+                "n": 2,
+                "train_ppl": round(bigram.perplexity(train_text), 2),
+                "test_ppl": round(bigram.perplexity(test_text), 2),
+                "sample_expansion": bigram.expand(sample_phrase, seed=seed, min_len=4, max_len=12),
+            },
+            "trigram": {
+                "name": "Trigram Model (n=3, add-0.5)",
+                "n": 3,
+                "train_ppl": round(trigram.perplexity(train_text), 2),
+                "test_ppl": round(trigram.perplexity(test_text), 2),
+                "sample_expansion": trigram.expand(sample_phrase, seed=seed, min_len=4, max_len=12),
+            },
+        },
+    }

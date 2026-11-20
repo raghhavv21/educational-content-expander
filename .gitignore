@@ -1,16 +1,6 @@
-# Secrets: never commit your real settings
 .env
-
-# OS
 .DS_Store
-
-# Python
 __pycache__/
 *.pyc
 .venv/
 .pytest_cache/
-
-# Local data
-data/*
-!data/corpus.txt
-*.db

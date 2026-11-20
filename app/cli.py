@@ -55,8 +55,8 @@ def main(argv: list[str] | None = None) -> None:
     )
     sub = parser.add_subparsers(dest="command", required=True)
 
-    # Smoke-test command
-    sub.add_parser("hello", help="check that everything is wired up")
+    # Quick verification command
+    sub.add_parser("hello", help="check that the CLI is ready")
 
     # Expand command
     p_expand = sub.add_parser("expand", help="expand a short phrase into a complete sentence")

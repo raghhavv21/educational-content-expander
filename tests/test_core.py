@@ -110,3 +110,9 @@ def test_compare_models_and_cli(capsys, tmp_path):
     assert "BASELINE COMPARISON & MODEL EVALUATION REPORT" in out
     assert "Unigram (Zero-Context Baseline)" in out
     assert "Trigram Model" in out
+
+
+def test_cli_hello(capsys):
+    from app.cli import main
+    main(["hello"])
+    assert "is ready" in capsys.readouterr().out

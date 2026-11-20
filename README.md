@@ -2,7 +2,7 @@
 
 [![Built with askThili](https://ask.thili.ai/api/v1/public/projects/f7mj2mtrx2/badge.svg)](https://ask.thili.ai/b/f7mj2mtrx2)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.14-blue.svg)](https://www.python.org/)
-[![Tests Passing](https://img.shields.io/badge/tests-9%20passed-success.svg)](tests/)
+[![Tests Passing](https://img.shields.io/badge/tests-7%20passed-success.svg)](tests/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 An intelligent natural language processing CLI tool engineered to assist educators, instructional designers, and curriculum developers in expanding concise bullet points, outlines, and lecture notes into grammatically sound, contextually accurate educational sentences.
@@ -322,17 +322,15 @@ pytest -v
 
 **Test Execution Results:**
 ```text
-tests/test_core.py::test_milestone_1 PASSED                        [ 11%]
-tests/test_core.py::test_milestone_2 PASSED                        [ 22%]
-tests/test_core.py::test_milestone_3 PASSED                        [ 33%]
-tests/test_core.py::test_milestone_4 PASSED                        [ 44%]
-tests/test_core.py::test_unigram_baseline PASSED                   [ 55%]
-tests/test_core.py::test_compare_models_and_cli PASSED             [ 66%]
-tests/test_smoke.py::test_the_store_keeps_what_you_put_in_it PASSED[ 77%]
-tests/test_smoke.py::test_model_settings_default_to_a_local_ollama PASSED [ 88%]
-tests/test_smoke.py::test_the_command_line_runs PASSED             [100%]
+tests/test_core.py::test_milestone_1 PASSED                        [ 14%]
+tests/test_core.py::test_milestone_2 PASSED                        [ 28%]
+tests/test_core.py::test_milestone_3 PASSED                        [ 42%]
+tests/test_core.py::test_milestone_4 PASSED                        [ 57%]
+tests/test_core.py::test_unigram_baseline PASSED                   [ 71%]
+tests/test_core.py::test_compare_models_and_cli PASSED             [ 85%]
+tests/test_core.py::test_cli_hello PASSED                          [100%]
 
-============================== 9 passed in 0.06s ===============================
+============================== 7 passed in 0.05s ===============================
 ```
 
 ---
@@ -344,18 +342,14 @@ educational-content-expander/
 ├── app/
 │   ├── __init__.py
 │   ├── core.py           # N-gram LM, Unigram baseline, add-k smoothing, generation logic
-│   ├── cli.py            # Command-line interface and interactive sentence builder
-│   ├── llm.py            # Optional external LLM fallback adapter
-│   └── storage.py        # Lightweight JSON snippet persistence store
+│   └── cli.py            # Command-line interface and interactive sentence builder
 ├── data/
 │   └── corpus.txt        # Curated CC-BY STEM science education text corpus
 ├── tests/
-│   ├── test_core.py      # Core model, smoothing, expansion, and baseline unit tests
-│   └── test_smoke.py     # CLI wiring, configuration, and storage smoke tests
-├── .env.example          # Template configuration for optional LLM endpoints
+│   └── test_core.py      # Core model, smoothing, expansion, baseline, and CLI unit tests
 ├── .gitignore            # Git exclusion rules
 ├── pytest.ini            # Pytest configuration
-├── requirements.txt      # Strictly pinned production and test dependencies
+├── requirements.txt      # Strictly pinned dependencies (pytest)
 └── README.md             # Complete project documentation and benchmark report
 ```
 

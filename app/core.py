@@ -192,7 +192,7 @@ class NgramLM:
         return math.exp(-log_sum / total_steps)
 
 
-# --- Milestone 1: Gather a corpus of educational texts relevant to a subject.
+# Milestone 1: Corpus ingestion and tokenization
 def milestone_1(corpus_path: str | Path | None = None) -> dict:
     """Load and preprocess the educational corpus, returning summary statistics."""
     raw = load_corpus(corpus_path)
@@ -205,14 +205,14 @@ def milestone_1(corpus_path: str | Path | None = None) -> dict:
     }
 
 
-# --- Milestone 2: Build the n-gram model, including add-k smoothing.
+# Milestone 2: Smoothed N-gram model fitting
 def milestone_2(corpus_path: str | Path | None = None, n: int = 3, k: float = 0.5) -> NgramLM:
     """Fit and return a smoothed n-gram language model on the educational corpus."""
     raw = load_corpus(corpus_path)
     return NgramLM(n=n, k=k).fit(raw)
 
 
-# --- Milestone 3: Implement text generation to expand short inputs.
+# Milestone 3: Context-aware text expansion
 def milestone_3(
     phrase: str,
     corpus_path: str | Path | None = None,
@@ -227,7 +227,7 @@ def milestone_3(
     return model.expand(phrase, seed=seed, min_len=min_len, max_len=max_len)
 
 
-# --- Milestone 4: Develop a simple CLI for text input and expansion output.
+# Milestone 4: CLI interface invocation
 def milestone_4(argv: list[str] | None = None) -> None:
     """Invoke the CLI entry point."""
     from app.cli import main
